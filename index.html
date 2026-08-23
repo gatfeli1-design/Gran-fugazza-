@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gran Fugazza Gestión</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f3f3;
+    color: #222;
+    padding-bottom: 75px;
+}
+
+header {
+    background: #b5121b;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.card {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    box-shadow: 0 2px 7px #0002;
+}
+
+.card small {
+    color: #777;
+}
+
+.card strong {
+    display: block;
+    font-size: 24px;
+    margin-top: 8px;
+}
+
+.green {
+    color: #16833a;
+}
+
+.red {
+    color: #b5121b;
+}
+
+.section {
+    margin-top: 25px;
+}
+
+button {
+    border: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.primary {
+    background: #b5121b;
+    color: white;
+}
+
+.secondary {
+    background: #ddd;
+}
+
+.form {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    margin-top: 10px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+.item {
+    background: white;
+    padding: 15px;
+    margin: 8px 0;
+    border-radius: 12px;
+    box-shadow: 0 1px 5px #0001;
+}
+
+.item strong {
+    font-size: 17px;
+}
+
+.item small {
+    color: #777;
+}
+
+nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    z-index: 100;
+}
+
+nav button {
+    background: white;
+    border-radius: 0;
+    font-size: 11px;
+    color: #555;
+}
+
+nav button.active {
+    color: #b5121b;
+    font-weight: bold;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+.total {
+    background: #fff0f0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+@media(max-width:500px) {
+    .cards {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🍕 Gran Fugazza</h1>
+    <div>Gestión de Pizzería</div>
+</header>
+
+<div class="container">
+
+<!-- INICIO -->
+
+<section id="inicio" class="screen active">
+
+    <h2>Resumen</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <small>Ventas de hoy</small>
+            <strong id="ventasHoy">$0</strong>
+        </div>
+
+        <div class="card">
+            <small>Ganancia de hoy</small>
+            <strong class="green" id="gananciaHoy">$0</strong>
+        </div>
+
+        <div class="card">
+            <small>Clientes</small>
+            <strong id="cantidadClientes">0</strong>
+        </div>
+
+        <div class="card">
+            <small>Productos</small>
+            <strong id="cantidadProductos">0</strong>
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>Resumen del mes</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <small>Ventas</small>
+                <strong id="ventasMes">$0</strong>
+            </div>
+
+            <div class="card">
+                <small>Costos</small>
+                <strong id="costosMes">$0</strong>
+            </div>
+
+            <div class="card">
+                <small>Gastos</small>
+                <strong id="gastosMes">$0</strong>
+            </div>
+
+            <div class="card">
+                <small>Utilidad real</small>
+                <strong class="green" id="utilidadMes">$0</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <h2>⚠️ Clientes para recuperar</h2>
+
+        <div id="clientesRecuperar"></div>
+
+    </div>
+
+</section>
+
+
+<!-- VENTAS -->
+
+<section id="ventas" class="screen">
+
+    <h2>🧾 Registrar venta</h2>
+
+    <div class="form">
+
+        <label>Cliente</label>
+
+        <select id="ventaCliente">
+            <option value="">Cliente ocasional</option>
+        </select>
+
+        <label>Producto</label>
+
+        <select id="ventaProducto">
+            <option value="">Seleccionar producto</option>
+        </select>
+
+        <label>Cantidad</label>
+
+        <input
+            id="ventaCantidad"
+            type="number"
+            value="1"
+            min="1"
+        >
+
+        <label>Forma de pago</label>
+
+        <select id="ventaPago">
+
+            <option>Efectivo</option>
+            <option>Débito</option>
+            <option>Crédito</option>
+            <option>Transferencia</option>
+            <option>Uber Eats</option>
+            <option>PedidosYa</option>
+
+        </select>
+
+        <button
+            class="primary"
+            style="width:100%"
+            onclick="registrarVenta()">
+
+            Registrar venta
+
+        </button>
+
+        <div
+            class="total"
+            id="previewVenta">
+
+            Selecciona un producto
+
+        </div>
+
+    </div>
+
+    <h2>Últimas ventas</h2>
+
+    <div id="listaVentas"></div>
+
+</section>
+
+
+<!-- CLIENTES -->
+
+<section id="clientes" class="screen">
+
+    <h2>👥 Clientes</h2>
+
+    <button
+        class="primary"
+        onclick="mostrarFormularioCliente()">
+
+        + Nuevo cliente
+
+    </button>
+
+    <div
+        id="formCliente"
+        class="form"
+        style="display:none">
+
+        <label>Nombre</label>
+
+        <input
+            id="clienteNombre"
+            placeholder="Ej: Juan Pérez">
+
+        <label>Teléfono</label>
+
+        <input
+            id="clienteTelefono"
+            placeholder="+56 9...">
+
+        <label>Dirección</label>
+
+        <input
+            id="clienteDireccion"
+            placeholder="Dirección">
+
+        <button
+            class="primary"
+            onclick="guardarCliente()">
+
+            Guardar cliente
+
+        </button>
+
+    </div>
+
+    <div id="listaClientes"></div>
+
+</section>
+
+
+<!-- PRODUCTOS -->
+
+<section id="productos" class="screen">
+
+    <h2>🍕 Productos</h2>
+
+    <button
+        class="primary"
+        onclick="mostrarFormularioProducto()">
+
+        + Nuevo producto
+
+    </button>
+
+    <div
+        id="formProducto"
+        class="form"
+        style="display:none">
+
+        <label>Producto</label>
+
+        <input
+            id="productoNombre"
+            placeholder="Pizza Pepperoni">
+
+        <label>Costo del producto</label>
+
+        <input
+            id="productoCosto"
+            type="number">
+
+        <label>Precio de venta</label>
+
+        <input
+            id="productoPrecio"
+            type="number">
+
+        <button
+            class="primary"
+            onclick="guardarProducto()">
+
+            Guardar producto
+
+        </button>
+
+    </div>
+
+    <div id="listaProductos"></div>
+
+</section>
+
+
+<!-- GASTOS -->
+
+<section id="gastos" class="screen">
+
+    <h2>🏪 Gastos del local</h2>
+
+    <div class="form">
+
+        <label>Concepto</label>
+
+        <input
+            id="gastoConcepto"
+            placeholder="Electricidad, agua, sueldo...">
+
+        <label>Monto</label>
+
+        <input
+            id="gastoMonto"
+            type="number">
+
+        <label>Fecha</label>
+
+        <input
+            id="gastoFecha"
+            type="date">
+
+        <button
+            class="primary"
+            style="width:100%"
+            onclick="guardarGasto()">
+
+            Registrar gasto
+
+        </button>
+
+    </div>
+
+    <h2>Gastos registrados</h2>
+
+    <div id="listaGastos"></div>
+
+</section>
+
+</div>
+
+
+<!-- MENÚ -->
+
+<nav>
+
+    <button
+        class="active"
+        onclick="abrir('inicio',this)">
+
+        🏠<br>Inicio
+
+    </button>
+
+    <button
+        onclick="abrir('ventas',this)">
+
+        🧾<br>Ventas
+
+    </button>
+
+    <button
+        onclick="abrir('clientes',this)">
+
+        👥<br>Clientes
+
+    </button>
+
+    <button
+        onclick="abrir('productos',this)">
+
+        🍕<br>Productos
+
+    </button>
+
+    <button
+        onclick="abrir('gastos',this)">
+
+        🏪<br>Gastos
+
+    </button>
+
+</nav>
+
+
+<script>
+
+let datos = JSON.parse(
+    localStorage.getItem("granFugazza")
+) || {
+
+    clientes: [],
+    productos: [],
+    ventas: [],
+    gastos: []
+
+};
+
+
+function guardarDatos() {
+
+    localStorage.setItem(
+        "granFugazza",
+        JSON.stringify(datos)
+    );
+
+    actualizar();
+
+}
+
+
+function dinero(numero) {
+
+    return new Intl.NumberFormat(
+        "es-CL",
+        {
+            style:"currency",
+            currency:"CLP",
+            maximumFractionDigits:0
+        }
+    ).format(numero || 0);
+
+}
+
+
+function fechaHoy() {
+
+    return new Date()
+        .toISOString()
+        .substring(0,10);
+
+}
+
+
+function abrir(id, boton) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(x =>
+            x.classList.remove("active")
+        );
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    document
+        .querySelectorAll("nav button")
+        .forEach(x =>
+            x.classList.remove("active")
+        );
+
+    boton.classList.add("active");
+
+    actualizar();
+
+}
+
+
+/* CLIENTES */
+
+function mostrarFormularioCliente() {
+
+    document
+        .getElementById("formCliente")
+        .style.display = "block";
+
+}
+
+
+function guardarCliente() {
+
+    let nombre =
+        document
+        .getElementById("clienteNombre")
+        .value
+        .trim();
+
+    if (!nombre) {
+
+        alert("Ingresa el nombre del cliente");
+
+        return;
+
+    }
+
+    datos.clientes.push({
+
+        id: Date.now(),
+
+        nombre,
+
+        telefono:
+            document
+            .getElementById("clienteTelefono")
+            .value,
+
+        direccion:
+            document
+            .getElementById("clienteDireccion")
+            .value
+
+    });
+
+    document
+        .getElementById("formCliente")
+        .style.display = "none";
+
+    document
+        .getElementById("clienteNombre")
+        .value = "";
+
+    document
+        .getElementById("clienteTelefono")
+        .value = "";
+
+    document
+        .getElementById("clienteDireccion")
+        .value = "";
+
+    guardarDatos();
+
+}
+
+
+/* PRODUCTOS */
+
+function mostrarFormularioProducto() {
+
+    document
+        .getElementById("formProducto")
+        .style.display = "block";
+
+}
+
+
+function guardarProducto() {
+
+    let nombre =
+        document
+        .getElementById("productoNombre")
+        .value
+        .trim();
+
+    let costo =
+        Number(
+            document
+            .getElementById("productoCosto")
+            .value
+        );
+
+    let precio =
+        Number(
+            document
+            .getElementById("productoPrecio")
+            .value
+        );
+
+    if (!nombre || precio <= 0) {
+
+        alert("Completa los datos");
+
+        return;
+
+    }
+
+    datos.productos.push({
+
+        id: Date.now(),
+
+        nombre,
+
+        costo,
+
+        precio
+
+    });
+
+    document
+        .getElementById("formProducto")
+        .style.display = "none";
+
+    guardarDatos();
+
+}
+
+
+/* VENTAS */
+
+function registrarVenta() {
+
+    let cliente =
+        Number(
+            document
+            .getElementById("ventaCliente")
+            .value
+        ) || null;
+
+    let producto =
+        Number(
+            document
+            .getElementById("ventaProducto")
+            .value
+        );
+
+    let cantidad =
+        Number(
+            document
+            .getElementById("ventaCantidad")
+            .value
+        );
+
+    if (!producto) {
+
+        alert("Selecciona un producto");
+
+        return;
+
+    }
+
+    let p =
+        datos.productos.find(
+            x => x.id === producto
+        );
+
+    datos.ventas.unshift({
+
+        id: Date.now(),
+
+        fecha: fechaHoy(),
+
+        cliente,
+
+        producto,
+
+        cantidad,
+
+        pago:
+            document
+            .getElementById("ventaPago")
+            .value,
+
+        venta: p.precio * cantidad,
+
+        costo: p.costo * cantidad
+
+    });
+
+    guardarDatos();
+
+    alert("Venta registrada correctamente");
+
+}
+
+
+function actualizarSelects() {
+
+    let clienteSelect =
+        document.getElementById(
+            "ventaCliente"
+        );
+
+    clienteSelect.innerHTML =
+        `<option value="">Cliente ocasional</option>`;
+
+    datos.clientes.forEach(c => {
+
+        clienteSelect.innerHTML +=
+            `<option value="${c.id}">
+                ${c.nombre}
+            </option>`;
+
+    });
+
+
+    let productoSelect =
+        document.getElementById(
+            "ventaProducto"
+        );
+
+    productoSelect.innerHTML =
+        `<option value="">
+            Seleccionar producto
+        </option>`;
+
+    datos.productos.forEach(p => {
+
+        productoSelect.innerHTML +=
+            `<option value="${p.id}">
+                ${p.nombre} - ${dinero(p.precio)}
+            </option>`;
+
+    });
+
+}
+
+
+document
+.getElementById("ventaProducto")
+.addEventListener(
+    "change",
+    actualizarPreview
+);
+
+
+document
+.getElementById("ventaCantidad")
+.addEventListener(
+    "input",
+    actualizarPreview
+);
+
+
+function actualizarPreview() {
+
+    let id =
+        Number(
+            document
+            .getElementById("ventaProducto")
+            .value
+        );
+
+    let cantidad =
+        Number(
+            document
+            .getElementById("ventaCantidad")
+            .value
+        ) || 1;
+
+    let p =
+        datos.productos.find(
+            x => x.id === id
+        );
+
+    if (!p) {
+
+        document
+        .getElementById("previewVenta")
+        .innerHTML =
+            "Selecciona un producto";
+
+        return;
+
+    }
+
+    let venta =
+        p.precio * cantidad;
+
+    let costo =
+        p.costo * cantidad;
+
+    let ganancia =
+        venta - costo;
+
+    document
+    .getElementById("previewVenta")
+    .innerHTML =
+
+        `Venta: <b>${dinero(venta)}</b><br>
+         Costo: ${dinero(costo)}<br>
+         Ganancia:
+         <b class="green">
+         ${dinero(ganancia)}
+         </b>`;
+
+}
+
+
+/* GASTOS */
+
+function guardarGasto() {
+
+    let concepto =
+        document
+        .getElementById("gastoConcepto")
+        .value
+        .trim();
+
+    let monto =
+        Number(
+            document
+            .getElementById("gastoMonto")
+            .value
+        );
+
+    let fecha =
+        document
+        .getElementById("gastoFecha")
+        .value
+        || fechaHoy();
+
+    if (!concepto || monto <= 0) {
+
+        alert("Completa los datos");
+
+        return;
+
+    }
+
+    datos.gastos.unshift({
+
+        id: Date.now(),
+
+        concepto,
+
+        monto,
+
+        fecha
+
+    });
+
+    guardarDatos();
+
+}
+
+
+/* ACTUALIZACIÓN GENERAL */
+
+function actualizar() {
+
+    actualizarSelects();
+
+    actualizarDashboard();
+
+    actualizarClientes();
+
+    actualizarProductos();
+
+    actualizarVentas();
+
+    actualizarGastos();
+
+    actualizarPreview();
+
+}
+
+
+/* DASHBOARD */
+
+function actualizarDashboard() {
+
+    let hoy =
+        fechaHoy();
+
+    let mes =
+        hoy.substring(0,7);
+
+
+    let ventasHoy =
+        datos.ventas.filter(
+            v => v.fecha === hoy
+        );
+
+
+    let ventasMes =
+        datos.ventas.filter(
+            v => v.fecha.startsWith(mes)
+        );
+
+
+    let gastosMes =
+        datos.gastos.filter(
+            g => g.fecha.startsWith(mes)
+        );
+
+
+    let totalHoy =
+        ventasHoy.reduce(
+            (s,v) => s + v.venta,
+            0
+        );
+
+
+    let gananciaHoy =
+        ventasHoy.reduce(
+            (s,v) =>
+                s + (v.venta - v.costo),
+            0
+        );
+
+
+    let totalMes =
+        ventasMes.reduce(
+            (s,v) => s + v.venta,
+            0
+        );
+
+
+    let costosMes =
+        ventasMes.reduce(
+            (s,v) => s + v.costo,
+            0
+        );
+
+
+    let gastos =
+        gastosMes.reduce(
+            (s,g) => s + g.monto,
+            0
+        );
+
+
+    let utilidad =
+        totalMes -
+        costosMes -
+        gastos;
+
+
+    document
+        .getElementById("ventasHoy")
+        .innerText =
+        dinero(totalHoy);
+
+
+    document
+        .getElementById("gananciaHoy")
+        .innerText =
+        dinero(gananciaHoy);
+
+
+    document
+        .getElementById("ventasMes")
+        .innerText =
+        dinero(totalMes);
+
+
+    document
+        .getElementById("costosMes")
+        .innerText =
+        dinero(costosMes);
+
+
+    document
+        .getElementById("gastosMes")
+        .innerText =
+        dinero(gastos);
+
+
+    document
+        .getElementById("utilidadMes")
+        .innerText =
+        dinero(utilidad);
+
+
+    document
+        .getElementById("cantidadClientes")
+        .innerText =
+        datos.clientes.length;
+
+
+    document
+        .getElementById("cantidadProductos")
+        .innerText =
+        datos.productos.length;
+
+
+    clientesParaRecuperar();
+
+}
+
+
+/* CLIENTES */
+
+function actualizarClientes() {
+
+    let contenedor =
+        document.getElementById(
+            "listaClientes"
+        );
+
+    contenedor.innerHTML = "";
+
+    datos.clientes.forEach(c => {
+
+        let compras =
+            datos.ventas.filter(
+                v => v.cliente === c.id
+            );
+
+        let total =
+            compras.reduce(
+                (s,v) => s + v.venta,
+                0
+            );
+
+        let ultima =
+            compras.length
+            ? compras[0].fecha
+            : "Nunca";
+
+        contenedor.innerHTML +=
+
+        `<div class="item">
+
+            <strong>${c.nombre}</strong>
+
+            <small>
+                📞 ${c.telefono || "Sin teléfono"}
+            </small><br>
+
+            <small>
+                🏠 ${c.direccion || "Sin dirección"}
+            </small>
+
+            <p>
+                🛒 ${compras.length} compras
+                <br>
+                💰 ${dinero(total)}
+                <br>
+                📅 Última compra:
+                ${ultima}
+            </p>
+
+        </div>`;
+
+    });
+
+}
+
+
+/* PRODUCTOS */
+
+function actualizarProductos() {
+
+    let contenedor =
+        document.getElementById(
+            "listaProductos"
+        );
+
+    contenedor.innerHTML = "";
+
+    datos.productos.forEach(p => {
+
+        let ventas =
+            datos.ventas.filter(
+                v => v.producto === p.id
+            );
+
+        let unidades =
+            ventas.reduce(
+                (s,v) => s + v.cantidad,
+                0
+            );
+
+        let ganancia =
+            (p.precio - p.costo)
+            * unidades;
+
+
+        contenedor.innerHTML +=
+
+        `<div class="item">
+
+            <strong>${p.nombre}</strong>
+
+            <p>
+                Costo:
+                ${dinero(p.costo)}
+                <br>
+
+                Precio:
+                ${dinero(p.precio)}
+                <br>
+
+                Ganancia por unidad:
+                <b class="green">
+                ${dinero(p.precio-p.costo)}
+                </b>
+                <br>
+
+                Vendidos:
+                ${unidades}
+                <br>
+
+                Ganancia acumulada:
+                <b class="green">
+                ${dinero(ganancia)}
+                </b>
+            </p>
+
+        </div>`;
+
+    });
+
+}
+
+
+/* VENTAS */
+
+function actualizarVentas() {
+
+    let contenedor =
+        document.getElementById(
+            "listaVentas"
+        );
+
+    contenedor.innerHTML = "";
+
+    datos.ventas
+    .slice(0,30)
+    .forEach(v => {
+
+        let p =
+            datos.productos.find(
+                x => x.id === v.producto
+            );
+
+        let c =
+            datos.clientes.find(
+                x => x.id === v.cliente
+            );
+
+
+        contenedor.innerHTML +=
+
+        `<div class="item">
+
+            <strong>
+                ${v.cantidad} ×
+                ${p ? p.nombre : "Producto"}
+            </strong>
+
+            <small>
+                ${v.fecha}
+                · ${c ? c.nombre : "Cliente ocasional"}
+                · ${v.pago}
+            </small>
+
+            <p>
+                ${dinero(v.venta)}
+                <br>
+
+                <span class="green">
+                Ganancia:
+                ${dinero(v.venta-v.costo)}
+                </span>
+            </p>
+
+        </div>`;
+
+    });
+
+}
+
+
+/* GASTOS */
+
+function actualizarGastos() {
+
+    let contenedor =
+        document.getElementById(
+            "listaGastos"
+        );
+
+    contenedor.innerHTML = "";
+
+    datos.gastos
+    .slice(0,30)
+    .forEach(g => {
+
+        contenedor.innerHTML +=
+
+        `<div class="item">
+
+            <strong>
+                ${g.concepto}
+            </strong>
+
+            <small>
+                ${g.fecha}
+            </small>
+
+            <p class="red">
+                -${dinero(g.monto)}
+            </p>
+
+        </div>`;
+
+    });
+
+}
+
+
+/* CLIENTES QUE ESTÁN DEJANDO DE COMPRAR */
+
+function clientesParaRecuperar() {
+
+    let contenedor =
+        document.getElementById(
+            "clientesRecuperar"
+        );
+
+    contenedor.innerHTML = "";
+
+    datos.clientes.forEach(c => {
+
+        let compras =
+            datos.ventas
+            .filter(v => v.cliente === c.id)
+            .sort(
+                (a,b) =>
+                    b.fecha.localeCompare(a.fecha)
+            );
+
+
+        if (compras.length < 2)
+            return;
+
+
+        let ultima =
+            new Date(compras[0].fecha);
+
+
+        let dias =
+            Math.floor(
+                (new Date() - ultima)
+                / 86400000
+            );
+
+
+        if (dias >= 30) {
+
+            contenedor.innerHTML +=
+
+            `<div class="item">
+
+                <strong>
+                    ⚠️ ${c.nombre}
+                </strong>
+
+                <small>
+                    Lleva ${dias}
+                    días sin comprar.
+                </small>
+
+            </div>`;
+
+        }
+
+    });
+
+
+    if (!contenedor.innerHTML) {
+
+        contenedor.innerHTML =
+            `<div class="item">
+                No hay clientes para recuperar.
+            </div>`;
+
+    }
+
+}
+
+
+/* FECHA */
+
+document
+.getElementById("gastoFecha")
+.value = fechaHoy();
+
+
+actualizar();
+
+</script>
+
+</body>
+  </html>
